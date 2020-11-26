@@ -34,7 +34,7 @@ class KittiDataset(Dataset):
         self.images_dir = './dataset/training/image_2/'
         self.transform = transform
         self.df = pd.read_csv('yolo-outputs.csv')
-        self.types = {'Car': 0, 'Pedestrian': 1, 'Cyclist': 2, 'Tram': 3, 'Person_sitting': 4, 'Misc': 5, 'DontCare': 6, 'Van': 7, 'Truck': 8}
+        self.types = {'Car': 0, 'Pedestrian': 1, 'Cyclist': 2, 'Tram': 0, 'Person_sitting': 1, 'Misc': 3, 'DontCare': 3, 'Van': 0, 'Truck': 0}
 
 
     def __len__(self):
@@ -94,8 +94,7 @@ num_RVs = 15 # num of RVs
 
 rg = RegionGraph(range(num_RVs)) 
 
-# what is this doing?
-for _ in range(0, 8):
+for _ in range(8):
     rg.random_split(2, 2)
 
 cspn = CSPN(rg, input_size) 
@@ -130,7 +129,7 @@ optimizer = optim.SGD(model.parameters(), lr=1e-4, momentum=0.9)
 
 def train():
     for image, yolo_outputs, label in dataloader:
-       
+        
         log_prob = model.forward(image, yolo_outputs, label)
         log_prob = torch.unsqueeze(log_prob, 2) # idk if this is correct
         # print('log_prob', log_prob, log_prob.shape, log_prob.dtype)
